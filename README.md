@@ -30,6 +30,9 @@ For video demoe: [click here](https://drive.google.com/file/d/1apyF_D27047gmrNWs
      - View product image, title, description, price, category, and relevance score
      - Results update dynamically based on preferences
 
+## Note:
+The dataset used as `sample_catalog.csv` is fictious dataset created by chatgpt which has images not related to brand. 
+This dataset is only used as testing purposes and the video demo clearly showcased it.
 ---
 
 ## 🛠️ Technologies Used
