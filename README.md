@@ -46,8 +46,8 @@ The system leverages **semantic search with vector embeddings (SentenceTransform
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-username/ai-ecommerce-search.git
-cd ai-ecommerce-search
+git clone https://github.com/WerewolfHunters/vro-buddy-search.git
+cd vro-buddy-search
 ```
 
 ### 2️⃣ Create Virtual Environment
