@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import os
+import pandas as pd
 from search.indexer import Indexer
 from search.searcher import Searcher
 from utils.ranking import apply_personalization
@@ -100,7 +101,7 @@ if not query and st.session_state.click_history:
 # If user types query -> search
 # -----------------------
 elif query:
-    results = searcher.search(query, top_k=20)
+    results = searcher.search(query, top_k=50)
 
     if not results:
         st.warning("No results found. Try a different query.")
@@ -111,9 +112,52 @@ elif query:
             catalog_df=searcher.catalog
         )
 
+        df_results = pd.DataFrame(ranked)
+
+        # -----------------------
+        # Filters Section (show only after search)
+        # -----------------------
+        st.markdown("### 🔧 Filters")
+
+        col1, col2, col3 = st.columns(3)
+
+        # Price sort
+        with col1:
+            sort_option = st.selectbox(
+                "Sort by Price",
+                ["None", "Low → High", "High → Low"]
+            )
+
+        # Brand filter
+        with col2:
+            brands = ["All"] + sorted(df_results["brand"].dropna().unique().tolist())
+            brand_filter = st.selectbox("Filter by Brand", brands)
+
+        # Category filter
+        with col3:
+            categories = ["All"] + sorted(df_results["category"].dropna().unique().tolist())
+            category_filter = st.selectbox("Filter by Category", categories)
+
+        # Apply filters
+        filtered_df = df_results.copy()
+
+        if brand_filter != "All":
+            filtered_df = filtered_df[filtered_df["brand"] == brand_filter]
+
+        if category_filter != "All":
+            filtered_df = filtered_df[filtered_df["category"] == category_filter]
+
+        if sort_option == "Low → High":
+            filtered_df = filtered_df.sort_values(by="price", ascending=True)
+        elif sort_option == "High → Low":
+            filtered_df = filtered_df.sort_values(by="price", ascending=False)
+
+        # -----------------------
+        # Display results
+        # -----------------------
         st.subheader(f"🔎 Search Results for: **{query}**")
 
-        for r in ranked[:10]:
+        for _, r in filtered_df.head(10).iterrows():
             with st.container():
                 cols = st.columns([1, 3])
 
@@ -126,12 +170,13 @@ elif query:
                 with cols[1]:
                     st.markdown(f"### {r['title']}")
                     st.write(r['short_description'])
+                    st.write(f"**Brand:** {r['brand']}")
                     st.write(f"**Category:** {r['category']}")
                     st.write(f"**Price:** ₹{r['price']:.2f}")
                     st.write(f"**Score:** {r['score']:.4f}")
 
                     if st.button(f"👍 Interested", key=f"select_{r['id']}"):
-                        st.session_state.click_history.append(r['id'])
+                        st.session_state.click_history.append(int(r['id']))
                         save_prefs(st.session_state.click_history)
                         st.success("Added to your preferences!")
 
