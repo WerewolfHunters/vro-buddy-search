@@ -6,6 +6,7 @@ An **AI-driven product search system** for e-commerce catalogs that supports nat
 - *"bags between 1000 and 3000"*
 
 The system leverages **semantic search with vector embeddings (SentenceTransformers + FAISS)** and provides **personalized ranking** based on user preferences and past interactions.
+For video demoe: [click here](https://drive.google.com/file/d/1apyF_D27047gmrNWsHvYIF9Rv5rYPNZs/view?usp=sharing)
 
 ---
 
